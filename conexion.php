@@ -6,6 +6,5 @@ if ($db) {
 } else {
     echo "Error en la conexión.";
 }
-?>
 
 ?>
