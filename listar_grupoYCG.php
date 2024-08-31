@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="es">
 
 <head>
@@ -69,10 +70,6 @@
         footer img {
             margin-bottom: 10px;
         }
-
-        .is-invalid {
-            border-color: #dc3545 !important;
-        }
     </style>
 </head>
 
@@ -94,82 +91,115 @@
         <p class="lead">PostgreSQL + PHP</p>
     </div>
 
-    <div class="container">
-        <div class="card mb-4">
-            <div class="card-body">
-                <form autocomplete="off" action="index-post.php" method="post" id="registrationForm">
-                    <input type="hidden" name="id" id="id">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Nro Documento</label>
-                                <input type="text" name="doc" maxlength="8" class="form-control" id="doc" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Nombre</label>
-                                <input type="text" name="nom" class="form-control" id="nom">
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label>Apellidos</label>
-                                <input type="text" name="ape" class="form-control" id="ape">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Direccion</label>
-                                <input type="text" name="dir" class="form-control" id="dir">
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Celular</label>
-                                <input type="text" name="cel" class="form-control" id="cel">
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-info float-right">Registrar</button>
-                </form>
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Registro Exitoso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    El usuario ha sido registrado con éxito.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Registros</h5>
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Nro Documento</th>
-                                <th>Nombre</th>
-                                <th>Apellidos</th>
-                                <th>Direccion</th>
-                                <th>Celular</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recordTableBody">
-                            <!-- Aquí se insertarían los registros dinámicamente -->
-                            <tr data-id="1">
-                                <td>12345678</td>
-                                <td>Juan</td>
-                                <td>Pérez</td>
-                                <td>Calle 123</td>
-                                <td>987654321</td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning edit-btn">Editar</button>
-                                    <button class="btn btn-sm btn-danger delete-btn">Eliminar</button>
-                                </td>
-                            </tr>
-                            <!-- Más registros aquí -->
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Tabla para mostrar los datos de las personas -->
+    <div class="card mt-5">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
+            <div class="table-responsive">
+                <table class="table table-striped text-center">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Nro Documento</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                            <th>Dirección</th>
+                            <th>Celular</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        include("conexion.php");
+                        $con = conexion();
+                        $sql = "SELECT * FROM persona";
+
+                        // Ejecutar la consulta
+                        $resultado = pg_query($con, $sql);
+                        if ($resultado) {
+                            // Recorrer los resultados y mostrar cada fila en la tabla
+                            while ($fila = pg_fetch_assoc($resultado)) {
+                                echo "<tr>";
+                                echo "<td>" . $fila['documento'] . "</td>";
+                                echo "<td>" . $fila['nombre'] . "</td>";
+                                echo "<td>" . $fila['apellido'] . "</td>";
+                                echo "<td>" . $fila['direccion'] . "</td>";
+                                echo "<td>" . $fila['celular'] . "</td>";
+                                echo "<td>";
+                                echo "<a href='index.php' class='btn btn-info btn-sm'>Registrar</a> ";
+                                echo "<button type='button' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#editarModal" . $fila['documento'] . "'>Editar</button> ";
+                                echo "<a href='eliminar.php?id=" . $fila['documento'] . "' class='btn btn-danger btn-sm'>Eliminar</a>";
+                                echo "</td>";
+                                echo "</tr>";
+
+                                // Modal para editar datos
+                                echo "
+                                <div class='modal fade' id='editarModal" . $fila['documento'] . "' tabindex='-1' role='dialog' aria-labelledby='editarModalLabel" . $fila['documento'] . "' aria-hidden='true'>
+                                    <div class='modal-dialog' role='document'>
+                                        <div class='modal-content'>
+                                            <div class='modal-header'>
+                                                <h5 class='modal-title' id='editarModalLabel" . $fila['documento'] . "'>Editar Persona</h5>
+                                                <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                                                    <span aria-hidden='true'>&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class='modal-body'>
+                                                <form action='editar.php' method='POST'>
+                                                    <input type='hidden' name='documento' value='" . $fila['documento'] . "'>
+                                                    <div class='form-group'>
+                                                        <label for='nombre'>Nombre</label>
+                                                        <input type='text' class='form-control' id='nombre' name='nombre' value='" . $fila['nombre'] . "' required>
+                                                    </div>
+                                                    <div class='form-group'>
+                                                        <label for='apellido'>Apellidos</label>
+                                                        <input type='text' class='form-control' id='apellido' name='apellido' value='" . $fila['apellido'] . "' required>
+                                                    </div>
+                                                    <div class='form-group'>
+                                                        <label for='direccion'>Dirección</label>
+                                                        <input type='text' class='form-control' id='direccion' name='direccion' value='" . $fila['direccion'] . "' required>
+                                                    </div>
+                                                    <div class='form-group'>
+                                                        <label for='celular'>Celular</label>
+                                                        <input type='text' class='form-control' id='celular' name='celular' value='" . $fila['celular'] . "' required>
+                                                    </div>
+                                                    <button type='submit' class='btn btn-primary'>Guardar cambios</button>
+                                                </form>
+                                            </div>
+                                            <div class='modal-footer'>
+                                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cerrar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
+                        }
+
+                        pg_close($con);
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -184,70 +214,33 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7HUiB39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
     <script>
-        $(document).ready(function () {
-            // Manejo de validación
-            $('#registrationForm').submit(function (e) {
-                var requiredFields = $('input[required]');
-                var isValid = true;
+    $(document).ready(function () {
+        $('#registrationForm').submit(function (e) {
+            // Verifica si los campos requeridos están vacíos
+            var requiredFields = $('input[required]');
+            var isValid = true;
 
-                requiredFields.each(function () {
-                    if ($(this).val().trim() === '') {
-                        isValid = false;
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    return false;
+            requiredFields.each(function () {
+                if ($(this).val().trim() === '') {
+                    isValid = false;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
                 }
             });
 
-            // Manejo de edición
-            $('.edit-btn').click(function () {
-                var row = $(this).closest('tr');
-                var id = row.data('id');
-                var doc = row.find('td').eq(0).text();
-                var nom = row.find('td').eq(1).text();
-                var ape = row.find('td').eq(2).text();
-                var dir = row.find('td').eq(3).text();
-                var cel = row.find('td').eq(4).text();
-
-                $('#id').val(id);
-                $('#doc').val(doc);
-                $('#nom').val(nom);
-                $('#ape').val(ape);
-                $('#dir').val(dir);
-                $('#cel').val(cel);
-
-                $('html, body').animate({ scrollTop: 0 }, 'fast');
-            });
-
-            // Manejo de eliminación
-            $('.delete-btn').click(function () {
-                var row = $(this).closest('tr');
-                var id = row.data('id');
-
-                if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
-                    // Aquí iría la lógica para eliminar el registro, por ejemplo una llamada AJAX
-                    console.log('Registro con ID ' + id + ' eliminado');
-                    row.remove();
-                }
-            });
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            } else {
+                $('#confirmationModal').modal('show');
+            }
         });
-    </script>
+    });
+</script>
 </body>
 
 </html>
