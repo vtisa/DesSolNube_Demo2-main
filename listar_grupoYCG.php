@@ -197,67 +197,68 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"
+        integrity="sha384-8g2v0KzEOg0G5Z5Kv1Bd6zK7ykvTP6hvsMIK7/gpF6T4Wq4du4cF3f5T92a39+Zm" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 
     <script>
-        function editarPersona(fila) {
-            $('#editDocumento').val(fila.documento);
-            $('#editNombre').val(fila.nombre);
-            $('#editApellido').val(fila.apellido);
-            $('#editDireccion').val(fila.direccion);
-            $('#editCelular').val(fila.celular);
+        function editarPersona(persona) {
+            $('#editDocumento').val(persona.documento);
+            $('#editNombre').val(persona.nombre);
+            $('#editApellido').val(persona.apellido);
+            $('#editDireccion').val(persona.direccion);
+            $('#editCelular').val(persona.celular);
+
             $('#editarModal').modal('show');
         }
 
         function guardarCambios() {
-            const documento = $('#editDocumento').val();
-            const nombre = $('#editNombre').val();
-            const apellido = $('#editApellido').val();
-            const direccion = $('#editDireccion').val();
-            const celular = $('#editCelular').val();
+            var documento = $('#editDocumento').val();
+            var nombre = $('#editNombre').val();
+            var apellido = $('#editApellido').val();
+            var direccion = $('#editDireccion').val();
+            var celular = $('#editCelular').val();
 
             $.ajax({
-            url: 'editar.php',
-            method: 'POST',
-            data: {
-                documento: documento,
-                nombre: nombre,
-                apellido: apellido,
-                direccion: direccion,
-                celular: celular
-            },
-            success: function(response) {
-                $('#editarModal').modal('hide');
-                location.reload(); // Actualiza la página para reflejar los cambios
-            },
-            error: function(xhr, status, error) {
-                alert('Error al guardar cambios: ' + error);
-            }
-        });
-    }
-
-    function eliminarPersona(documento) {
-        if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
-            $.ajax({
-                url: 'eliminar.php',
+                url: 'editar.php',
                 method: 'POST',
                 data: {
-                    documento: documento
+                    documento: documento,
+                    nombre: nombre,
+                    apellido: apellido,
+                    direccion: direccion,
+                    celular: celular
                 },
                 success: function(response) {
-                    location.reload(); // Actualiza la página para reflejar la eliminación
+                    $('#editarModal').modal('hide');
+                    location.reload(); // Actualiza la página para reflejar los cambios
                 },
                 error: function(xhr, status, error) {
-                    alert('Error al eliminar el registro: ' + error);
+                    alert('Error al guardar cambios: ' + error);
                 }
             });
         }
-    }
-</script>
 
+        function eliminarPersona(documento) {
+            if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
+                $.ajax({
+                    url: 'eliminar.php',
+                    method: 'POST',
+                    data: {
+                        documento: documento
+                    },
+                    success: function(response) {
+                        location.reload(); // Actualiza la página para reflejar la eliminación
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al eliminar el registro: ' + error);
+                    }
+                });
+            }
+        }
+    </script>
 </body>
 
 </html>
