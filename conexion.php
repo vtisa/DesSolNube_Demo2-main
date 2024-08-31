@@ -11,7 +11,7 @@ function conexion() {
     if (!$db) {
         die("Error: No se pudo conectar a la base de datos. " . pg_last_error());
     } else {
-        echo "Conexión exitosa.<br>";
+        echo "Conexion exitosa.<br>";
     }
 
     return $db;

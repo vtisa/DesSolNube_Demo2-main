@@ -19,8 +19,8 @@ if ($con) {
         echo "Datos insertados correctamente.<br>";
     }
 
-    header("Location: listar_grupoYCG.php");
+    //header("Location: listar_grupoYCG.php");
 } else {
-    echo "No se pudo establecer la conexión.<br>";
+    echo "No se pudo establecer la conexion.<br>";
 }
 ?>
