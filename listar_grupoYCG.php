@@ -1,45 +1,3 @@
-<?php
-include("conexion.php");
-$con = conexion();
-
-// Handle form submissions
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] == 'edit') {
-            $documento = $_POST['documento'];
-            $nombre = $_POST['nombre'];
-            $apellido = $_POST['apellido'];
-            $direccion = $_POST['direccion'];
-            $celular = $_POST['celular'];
-            
-            $sql = "UPDATE persona SET nombre = $1, apellido = $2, direccion = $3, celular = $4 WHERE documento = $5";
-            $result = pg_query_params($con, $sql, array($nombre, $apellido, $direccion, $celular, $documento));
-            
-            if (!$result) {
-                echo "Error al actulizar" . pg_last_error($con);
-            } else {
-                echo "Actualizado exitosamente";
-            }
-        } elseif ($_POST['action'] == 'delete') {
-            $documento = $_POST['documento'];
-            
-            $sql = "DELETE FROM persona WHERE documento = $1";
-            $result = pg_query_params($con, $sql, array($documento));
-            
-            if (!$result) {
-                echo "Error al borrar: " . pg_last_error($con);
-            } else {
-                echo "Borrado exitosamente";
-            }
-        }
-    }
-}
-
-// Fetch all records
-$sql = "SELECT * FROM persona";
-$resultado = pg_query($con, $sql);
-?>
-
 <!doctype html>
 <html lang="es">
 
@@ -56,131 +14,123 @@ $resultado = pg_query($con, $sql);
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <style>
+        body {
+            padding-top: 56px; /* Adjust for fixed navbar */
+        }
         h1 {
             font-weight: bold;
             color: #333;
         }
-
-        .card-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-
         .card {
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
         }
-
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
         .navbar-brand img {
             width: 30px;
-            position: absolute;
-            margin-left: -35px;
+            margin-right: 10px;
         }
-
-        .navbar-brand span {
-            position: relative;
-            left: 35px;
-        }
-
         .nav-link {
             color: #333 !important;
             transition: all 0.3s ease;
         }
-
         .nav-link:hover {
             color: #ff6b6b !important;
         }
-
         .btn-info {
             background-color: #ff6b6b;
             border-color: #ff6b6b;
         }
-
         .btn-info:hover {
             background-color: #ff4f4f;
             border-color: #ff4f4f;
         }
-
         footer {
             background-color: #f8f9fa;
             padding: 20px 0;
             margin-top: 50px;
         }
-
         footer img {
             margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">
-            <img src="index2.png" alt="Index Logo">
-            <span>Index</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="index2.png" alt="Index Logo">
+                <span>Index</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
     </nav>
 
-    <div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 text-info">Registrando datos con Railway</h1>
-        <p class="lead">PostgreSQL + PHP</p>
-    </div>
+    <main role="main" class="container mt-5">
+        <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+            <h1 class="display-4 text-info">Registrando datos con Railway</h1>
+            <p class="lead">PostgreSQL + PHP</p>
+        </div>
 
-    <!-- Botón Registrar -->
-  
-
-    <!-- Tabla para mostrar los datos de las personas -->
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
-            <div class="container text-right mb-4">
-                <a href="index.php" class="btn btn-info">Registrar</a>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped text-center">
-                    <thead class="table-info">
-                        <tr>
-                            <th>Nro Documento</th>
-                            <th>Nombre</th>
-                            <th>Apellidos</th>
-                            <th>Dirección</th>
-                            <th>Celular</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personaTableBody">
-                        <?php
-                        if ($resultado) {
-                            while ($fila = pg_fetch_assoc($resultado)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($fila['documento']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['nombre']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['apellido']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['direccion']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['celular']) . "</td>";
-                                echo "<td>
-                                        <button class='btn btn-sm btn-warning' onclick='editarPersona(" . json_encode($fila) . ")'>Editar</button>
-                                        <button class='btn btn-sm btn-danger' onclick='eliminarPersona(\"" . htmlspecialchars($fila['documento']) . "\")'>Eliminar</button>
-                                      </td>";
-                                echo "</tr>";
+        <!-- Tabla para mostrar los datos de las personas -->
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
+                <div class="text-right mb-4">
+                    <a href="index.php" class="btn btn-info">Registrar</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped text-center">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Nro Documento</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Dirección</th>
+                                <th>Celular</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personaTableBody">
+                            <?php
+                            if ($resultado) {
+                                while ($fila = pg_fetch_assoc($resultado)) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($fila['documento']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['nombre']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['apellido']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['direccion']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($fila['celular']) . "</td>";
+                                    echo "<td>
+                                            <button class='btn btn-sm btn-warning' onclick='editarPersona(" . json_encode($fila) . ")'>Editar</button>
+                                            <button class='btn btn-sm btn-danger' onclick='eliminarPersona(\"" . htmlspecialchars($fila['documento']) . "\")'>Eliminar</button>
+                                          </td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
                             }
-                        } else {
-                            echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
-                        }
 
-                        pg_close($con);
-                        ?>
-                    </tbody>
-                </table>
+                            pg_close($con);
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Modal para Editar Persona -->
     <div class="modal fade" id="editarModal" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel"
@@ -198,7 +148,7 @@ $resultado = pg_query($con, $sql);
                         <input type="hidden" name="action" value="edit">
                         <div class="form-group">
                             <label for="editDocumento">Nro Documento</label>
-                            <input type="text" class="form-control" id="editDocumento" name="documento">
+                            <input type="text" class="form-control" id="editDocumento" name="documento" readonly>
                         </div>
                         <div class="form-group">
                             <label for="editNombre">Nombre</label>
@@ -223,12 +173,10 @@ $resultado = pg_query($con, $sql);
         </div>
     </div>
 
-    <footer class="pt-4 text-center">
-        <div class="row">
-            <div class="col-12 col-md">
-                <img class="mb-2" src="https://www.svgrepo.com/show/508391/uncle.svg" alt="" width="24" height="24">
-                <small class="d-block mb-3 text-muted">&copy; 2023-1</small>
-            </div>
+    <footer class="text-center">
+        <div class="container">
+            <img class="mb-2" src="https://www.svgrepo.com/show/508391/uncle.svg" alt="" width="24" height="24">
+            <small class="d-block mb-3 text-muted">&copy; 2023-1</small>
         </div>
     </footer>
 
