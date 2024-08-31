@@ -150,32 +150,32 @@ $resultado = pg_query($con, $sql);
                         </tr>
                     </thead>
                     <tbody id="personaTableBody">
-                        <?php
-                        if ($resultado) {
-                            while ($fila = pg_fetch_assoc($resultado)) {
-                                echo "<tr>";
-                                echo "<td>" . htmlspecialchars($fila['documento']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['nombre']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['apellido']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['direccion']) . "</td>";
-                                echo "<td>" . htmlspecialchars($fila['celular']) . "</td>";
-                                echo "<td>
-                                        <button class='btn btn-sm btn-warning' onclick='editarPersona(\"" . htmlspecialchars(json_encode($fila)) . "\")'>Editar</button>
-                                        <form method='post' style='display:inline;'>
-                                            <input type='hidden' name='action' value='delete'>
-                                            <input type='hidden' name='documento' value='" . htmlspecialchars($fila['documento']) . "'>
-                                            <button type='submit' class='btn btn-sm btn-danger' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</button>
-                                        </form>
-                                      </td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
-                        }
+    <?php
+    if ($resultado) {
+        while ($fila = pg_fetch_assoc($resultado)) {
+            echo "<tr>";
+            echo "<td>" . htmlspecialchars($fila['documento']) . "</td>";
+            echo "<td>" . htmlspecialchars($fila['nombre']) . "</td>";
+            echo "<td>" . htmlspecialchars($fila['apellido']) . "</td>";
+            echo "<td>" . htmlspecialchars($fila['direccion']) . "</td>";
+            echo "<td>" . htmlspecialchars($fila['celular']) . "</td>";
+            echo "<td>
+                    <button class='btn btn-sm btn-warning' onclick='editarPersona(\"" . htmlspecialchars(json_encode($fila)) . "\")'>Editar</button>
+                    <form method='post' style='display:inline;'>
+                        <input type='hidden' name='action' value='delete'>
+                        <input type='hidden' name='documento' value='" . htmlspecialchars($fila['documento']) . "'>
+                        <button type='submit' class='btn btn-sm btn-danger' onclick='return confirm(\"¿Estás seguro de que deseas eliminar este registro?\")'>Eliminar</button>
+                    </form>
+                  </td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
+    }
 
-                        pg_close($con);
-                        ?>
-                    </tbody>
+    pg_close($con);
+    ?>
+</tbody>
                 </table>
             </div>
         </div>
@@ -236,17 +236,17 @@ $resultado = pg_query($con, $sql);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
-        function editarPersona(personaJSON) {
-            var persona = JSON.parse(personaJSON);
-            document.getElementById('editDocumento').value = persona.documento;
-            document.getElementById('editNombre').value = persona.nombre;
-            document.getElementById('editApellido').value = persona.apellido;
-            document.getElementById('editDireccion').value = persona.direccion;
-            document.getElementById('editCelular').value = persona.celular;
+     function editarPersona(personaJSON) {
+    var persona = JSON.parse(personaJSON);
+    document.getElementById('editDocumento').value = persona.documento;
+    document.getElementById('editNombre').value = persona.nombre;
+    document.getElementById('editApellido').value = persona.apellido;
+    document.getElementById('editDireccion').value = persona.direccion;
+    document.getElementById('editCelular').value = persona.celular;
 
-            var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
-            editarModal.show();
-        }
+    var editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
+    editarModal.show();
+}
     </script>
 </body>
 
