@@ -10,6 +10,6 @@ $password = "password=H0IB7ht78vEte22UZ2eQEUcYWSvLjtn4";
 
 $db = pg_connect("$host $port $dbname $user $password");
 
-return $db;
+return $db;
 }
 ?>
