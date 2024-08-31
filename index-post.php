@@ -47,4 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+// Fetch all records
+$sql = "SELECT * FROM persona";
+$resultado = pg_query($con, $sql);
 ?>

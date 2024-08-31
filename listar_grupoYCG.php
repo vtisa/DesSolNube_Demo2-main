@@ -1,9 +1,4 @@
-<?php
 
-// Fetch all records
-$sql = "SELECT * FROM persona";
-$resultado = pg_query($con, $sql);
-?>
 
 <!doctype html>
 <html lang="es">
