@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="es">
 
 <head>
@@ -87,29 +86,13 @@
     </nav>
 
     <div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 text-info">Registrando datos with Railway</h1>
+        <h1 class="display-4 text-info">Registrando datos con Railway</h1>
         <p class="lead">PostgreSQL + PHP</p>
     </div>
 
-    <!-- Modal de confirmación -->
-    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmationModalLabel">Registro Exitoso</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    El usuario ha sido registrado con éxito.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
+    <!-- Botón Registrar -->
+    <div class="container text-right mb-4">
+        <a href="index.php" class="btn btn-info">Registrar</a>
     </div>
 
     <!-- Tabla para mostrar los datos de las personas -->
@@ -128,7 +111,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="personaTableBody">
                         <?php
                         include("conexion.php");
                         $con = conexion();
@@ -145,52 +128,11 @@
                                 echo "<td>" . $fila['apellido'] . "</td>";
                                 echo "<td>" . $fila['direccion'] . "</td>";
                                 echo "<td>" . $fila['celular'] . "</td>";
-                                echo "<td>";
-                                echo "<a href='index.php' class='btn btn-info btn-sm'>Registrar</a> ";
-                                echo "<button type='button' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#editarModal" . $fila['documento'] . "'>Editar</button> ";
-                                echo "<a href='eliminar.php?id=" . $fila['documento'] . "' class='btn btn-danger btn-sm'>Eliminar</a>";
-                                echo "</td>";
+                                echo "<td>
+                                        <button class='btn btn-sm btn-warning' onclick='editarPersona(" . json_encode($fila) . ")'>Editar</button>
+                                        <button class='btn btn-sm btn-danger' onclick='eliminarPersona(\"" . $fila['documento'] . "\")'>Eliminar</button>
+                                      </td>";
                                 echo "</tr>";
-
-                                // Modal para editar datos
-                                echo "
-                                <div class='modal fade' id='editarModal" . $fila['documento'] . "' tabindex='-1' role='dialog' aria-labelledby='editarModalLabel" . $fila['documento'] . "' aria-hidden='true'>
-                                    <div class='modal-dialog' role='document'>
-                                        <div class='modal-content'>
-                                            <div class='modal-header'>
-                                                <h5 class='modal-title' id='editarModalLabel" . $fila['documento'] . "'>Editar Persona</h5>
-                                                <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
-                                                    <span aria-hidden='true'>&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class='modal-body'>
-                                                <form action='editar.php' method='POST'>
-                                                    <input type='hidden' name='documento' value='" . $fila['documento'] . "'>
-                                                    <div class='form-group'>
-                                                        <label for='nombre'>Nombre</label>
-                                                        <input type='text' class='form-control' id='nombre' name='nombre' value='" . $fila['nombre'] . "' required>
-                                                    </div>
-                                                    <div class='form-group'>
-                                                        <label for='apellido'>Apellidos</label>
-                                                        <input type='text' class='form-control' id='apellido' name='apellido' value='" . $fila['apellido'] . "' required>
-                                                    </div>
-                                                    <div class='form-group'>
-                                                        <label for='direccion'>Dirección</label>
-                                                        <input type='text' class='form-control' id='direccion' name='direccion' value='" . $fila['direccion'] . "' required>
-                                                    </div>
-                                                    <div class='form-group'>
-                                                        <label for='celular'>Celular</label>
-                                                        <input type='text' class='form-control' id='celular' name='celular' value='" . $fila['celular'] . "' required>
-                                                    </div>
-                                                    <button type='submit' class='btn btn-primary'>Guardar cambios</button>
-                                                </form>
-                                            </div>
-                                            <div class='modal-footer'>
-                                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>Cerrar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>";
                             }
                         } else {
                             echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
@@ -200,6 +142,46 @@
                         ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Persona -->
+    <div class="modal fade" id="editarModal" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarModalLabel">Editar Persona</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarForm">
+                        <div class="form-group">
+                            <label for="editDocumento">Nro Documento</label>
+                            <input type="text" class="form-control" id="editDocumento" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="editNombre">Nombre</label>
+                            <input type="text" class="form-control" id="editNombre">
+                        </div>
+                        <div class="form-group">
+                            <label for="editApellido">Apellidos</label>
+                            <input type="text" class="form-control" id="editApellido">
+                        </div>
+                        <div class="form-group">
+                            <label for="editDireccion">Dirección</label>
+                            <input type="text" class="form-control" id="editDireccion">
+                        </div>
+                        <div class="form-group">
+                            <label for="editCelular">Celular</label>
+                            <input type="text" class="form-control" id="editCelular">
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="guardarCambios()">Guardar Cambios</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -214,33 +196,68 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"></script> <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script> <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <script>
-    $(document).ready(function () {
-        $('#registrationForm').submit(function (e) {
-            // Verifica si los campos requeridos están vacíos
-            var requiredFields = $('input[required]');
-            var isValid = true;
+        function editarPersona(fila) {
+            $('#editDocumento').val(fila.documento);
+            $('#editNombre').val(fila.nombre);
+            $('#editApellido').val(fila.apellido);
+            $('#editDireccion').val(fila.direccion);
+            $('#editCelular').val(fila.celular);
+            $('#editarModal').modal('show');
+        }
 
-            requiredFields.each(function () {
-                if ($(this).val().trim() === '') {
-                    isValid = false;
-                    $(this).addClass('is-invalid');
-                } else {
-                    $(this).removeClass('is-invalid');
-                }
-            });
+        function guardarCambios() {
+            const documento = $('#editDocumento').val();
+            const nombre = $('#editNombre').val();
+            const apellido = $('#editApellido').val();
+            const direccion = $('#editDireccion').val();
+            const celular = $('#editCelular').val();
 
-            if (!isValid) {
-                e.preventDefault();
-                return false;
-            } else {
-                $('#confirmationModal').modal('show');
+            $.ajax({
+            url: 'editar.php',
+            method: 'POST',
+            data: {
+                documento: documento,
+                nombre: nombre,
+                apellido: apellido,
+                direccion: direccion,
+                celular: celular
+            },
+            success: function(response) {
+                $('#editarModal').modal('hide');
+                location.reload(); // Actualiza la página para reflejar los cambios
+            },
+            error: function(xhr, status, error) {
+                alert('Error al guardar cambios: ' + error);
             }
         });
-    });
+    }
+
+    function eliminarPersona(documento) {
+        if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
+            $.ajax({
+                url: 'eliminar.php',
+                method: 'POST',
+                data: {
+                    documento: documento
+                },
+                success: function(response) {
+                    location.reload(); // Actualiza la página para reflejar la eliminación
+                },
+                error: function(xhr, status, error) {
+                    alert('Error al eliminar el registro: ' + error);
+                }
+            });
+        }
+    }
 </script>
+
 </body>
 
 </html>
