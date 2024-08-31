@@ -86,101 +86,73 @@
     </nav>
 
     <div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 text-info">Registrando datos con Railway</h1>
+        <h1 class="display-4 text-info">Registrando datos with Railway</h1>
         <p class="lead">PostgreSQL + PHP</p>
     </div>
 
-    <!-- Botón Registrar -->
-    <div class="container text-right mb-4">
-        <a href="index.php" class="btn btn-info">Registrar</a>
-    </div>
-
-    <!-- Tabla para mostrar los datos de las personas -->
-    <div class="card mt-5">
-        <div class="card-body">
-            <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
-            <div class="table-responsive">
-                <table class="table table-striped text-center">
-                    <thead class="table-info">
-                        <tr>
-                            <th>Nro Documento</th>
-                            <th>Nombre</th>
-                            <th>Apellidos</th>
-                            <th>Dirección</th>
-                            <th>Celular</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personaTableBody">
-                        <?php
-                        include("conexion.php");
-                        $con = conexion();
-                        $sql = "SELECT * FROM persona";
-
-                        // Ejecutar la consulta
-                        $resultado = pg_query($con, $sql);
-                        if ($resultado) {
-                            // Recorrer los resultados y mostrar cada fila en la tabla
-                            while ($fila = pg_fetch_assoc($resultado)) {
-                                echo "<tr>";
-                                echo "<td>" . $fila['documento'] . "</td>";
-                                echo "<td>" . $fila['nombre'] . "</td>";
-                                echo "<td>" . $fila['apellido'] . "</td>";
-                                echo "<td>" . $fila['direccion'] . "</td>";
-                                echo "<td>" . $fila['celular'] . "</td>";
-                                echo "<td>
-                                        <button class='btn btn-sm btn-warning' onclick='editarPersona(" . json_encode($fila) . ")'>Editar</button>
-                                        <button class='btn btn-sm btn-danger' onclick='eliminarPersona(\"" . $fila['documento'] . "\")'>Eliminar</button>
-                                      </td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
-                        }
-
-                        pg_close($con);
-                        ?>
-                    </tbody>
-                </table>
+        <!-- Modal de confirmación -->
+        <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog"
+            aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Registro Exitoso</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        El usuario ha sido registrado con éxito.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para Editar Persona -->
-    <div class="modal fade" id="editarModal" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editarModalLabel">Editar Persona</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="editarForm">
-                        <div class="form-group">
-                            <label for="editDocumento">Nro Documento</label>
-                            <input type="text" class="form-control" id="editDocumento" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="editNombre">Nombre</label>
-                            <input type="text" class="form-control" id="editNombre">
-                        </div>
-                        <div class="form-group">
-                            <label for="editApellido">Apellidos</label>
-                            <input type="text" class="form-control" id="editApellido">
-                        </div>
-                        <div class="form-group">
-                            <label for="editDireccion">Dirección</label>
-                            <input type="text" class="form-control" id="editDireccion">
-                        </div>
-                        <div class="form-group">
-                            <label for="editCelular">Celular</label>
-                            <input type="text" class="form-control" id="editCelular">
-                        </div>
-                        <button type="button" class="btn btn-info" onclick="guardarCambios()">Guardar Cambios</button>
-                    </form>
+        <!-- Tabla para mostrar los datos de las personas -->
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped text-center">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Nro Documento</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Dirección</th>
+                                <th>Celular</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                include("conexion.php");
+                $con = conexion();
+                $sql = "SELECT * FROM persona";
+
+                // Ejecutar la consulta
+                $resultado = pg_query($con, $sql);
+                if ($resultado) {
+                  // Recorrer los resultados y mostrar cada fila en la tabla
+                  while ($fila = pg_fetch_assoc($resultado)) {
+                    echo "<tr>";
+                    echo "<td>" . $fila['documento'] . "</td>";
+                    echo "<td>" . $fila['nombre'] . "</td>";
+                    echo "<td>" . $fila['apellido'] . "</td>";
+                    echo "<td>" . $fila['direccion'] . "</td>";
+                    echo "<td>" . $fila['celular'] . "</td>";
+                  }
+                } else {
+                  echo "<tr><td colspan='6'>Error al ejecutar la consulta SQL: " . pg_last_error($con) . "</td></tr>";
+                }
+
+                pg_close($con);
+                ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -196,68 +168,40 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"
-        integrity="sha384-8g2v0KzEOg0G5Z5Kv1Bd6zK7ykvTP6hvsMIK7/gpF6T4Wq4du4cF3f5T92a39+Zm" crossorigin="anonymous"></script>
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
     <script>
-        function editarPersona(persona) {
-            $('#editDocumento').val(persona.documento);
-            $('#editNombre').val(persona.nombre);
-            $('#editApellido').val(persona.apellido);
-            $('#editDireccion').val(persona.direccion);
-            $('#editCelular').val(persona.celular);
+        $(document).ready(function () {
+            $('#registrationForm').submit(function (e) {
+                // Verifica si los campos requeridos están vacíos
+                var requiredFields = $('input[required]');
+                var isValid = true;
 
-            $('#editarModal').modal('show');
-        }
-
-        function guardarCambios() {
-            var documento = $('#editDocumento').val();
-            var nombre = $('#editNombre').val();
-            var apellido = $('#editApellido').val();
-            var direccion = $('#editDireccion').val();
-            var celular = $('#editCelular').val();
-
-            $.ajax({
-                url: 'editar.php',
-                method: 'POST',
-                data: {
-                    documento: documento,
-                    nombre: nombre,
-                    apellido: apellido,
-                    direccion: direccion,
-                    celular: celular
-                },
-                success: function(response) {
-                    $('#editarModal').modal('hide');
-                    location.reload(); // Actualiza la página para reflejar los cambios
-                },
-                error: function(xhr, status, error) {
-                    alert('Error al guardar cambios: ' + error);
-                }
-            });
-        }
-
-        function eliminarPersona(documento) {
-            if (confirm('¿Estás seguro de que deseas eliminar este registro?')) {
-                $.ajax({
-                    url: 'eliminar.php',
-                    method: 'POST',
-                    data: {
-                        documento: documento
-                    },
-                    success: function(response) {
-                        location.reload(); // Actualiza la página para reflejar la eliminación
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error al eliminar el registro: ' + error);
+                requiredFields.each(function () {
+                    if ($(this).val().trim() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
                     }
                 });
-            }
-        }
+
+
+                if (!isValid) {
+                    e.preventDefault();
+                    return false;
+                } else {
+                    $('#confirmationModal').modal('show');
+                }
+            });
+        });
     </script>
 </body>
 
