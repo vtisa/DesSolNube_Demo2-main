@@ -8,7 +8,7 @@ $ape = $_POST["ape"];
 $dir = $_POST["dir"];
 $cel = $_POST["cel"];
 
-$sql = "insert into Persona values(default,'$doc','$nom','$ape','$dir','$cel')";
+$sql = "insert into persona values(default,'$doc','$nom','$ape','$dir','$cel')";
 pg_query($con, $sql);
 
 header("location:listar_grupoYCG.php");
