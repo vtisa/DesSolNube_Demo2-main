@@ -51,8 +51,62 @@ $resultado = pg_query($con, $sql);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <style>
-        /* ... (keep the existing styles) ... */
+        <style>
+        h1 {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .card {
+            box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand img {
+            width: 30px;
+            position: absolute;
+            margin-left: -35px;
+        }
+
+        .navbar-brand span {
+            position: relative;
+            left: 35px;
+        }
+
+        .nav-link {
+            color: #333 !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ff6b6b !important;
+        }
+
+        .btn-info {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn-info:hover {
+            background-color: #ff4f4f;
+            border-color: #ff4f4f;
+        }
+
+        footer {
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        footer img {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
