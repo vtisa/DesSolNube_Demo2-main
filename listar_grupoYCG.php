@@ -1,39 +1,4 @@
 <?php
-include("conexion.php");
-$con = conexion();
-
-// Handle form submissions
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] == 'edit') {
-            $documento = $_POST['documento'];
-            $nombre = $_POST['nombre'];
-            $apellido = $_POST['apellido'];
-            $direccion = $_POST['direccion'];
-            $celular = $_POST['celular'];
-            
-            $sql = "UPDATE persona SET nombre = $1, apellido = $2, direccion = $3, celular = $4 WHERE documento = $5";
-            $result = pg_query_params($con, $sql, array($nombre, $apellido, $direccion, $celular, $documento));
-            
-            if (!$result) {
-                echo "Error updating record: " . pg_last_error($con);
-            } else {
-                echo "Record updated successfully";
-            }
-        } elseif ($_POST['action'] == 'delete') {
-            $documento = $_POST['documento'];
-            
-            $sql = "DELETE FROM persona WHERE documento = $1";
-            $result = pg_query_params($con, $sql, array($documento));
-            
-            if (!$result) {
-                echo "Error deleting record: " . pg_last_error($con);
-            } else {
-                echo "Record deleted successfully";
-            }
-        }
-    }
-}
 
 // Fetch all records
 $sql = "SELECT * FROM persona";
@@ -197,7 +162,7 @@ $resultado = pg_query($con, $sql);
                         <input type="hidden" name="action" value="edit">
                         <div class="form-group">
                             <label for="editDocumento">Nro Documento</label>
-                            <input type="text" class="form-control" id="editDocumento" name="documento" readonly>
+                            <input type="text" class="form-control" id="editDocumento" name="documento">
                         </div>
                         <div class="form-group">
                             <label for="editNombre">Nombre</label>
