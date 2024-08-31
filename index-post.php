@@ -2,14 +2,22 @@
 include("conexion.php");
 $con = conexion();
 
-$doc = $_POST["doc"];
-$nom = $_POST["nom"];
-$ape = $_POST["ape"];
-$dir = $_POST["dir"];
-$cel = $_POST["cel"];
+$documento = $_POST["documento"];
+$nombre = $_POST["nombre"];
+$apellido = $_POST["apellido"];
+$direccion = $_POST["direccion"];
+$celular = $_POST["celular"];
 
-$sql = "insert into persona values(default,'$doc','$nom','$ape','$dir','$cel')";
-pg_query($con, $sql);
+$query = "INSERT INTO persona (documento, nombre, apellido, direccion, celular) 
+          VALUES ($1, $2, $3, $4, $5)";
 
-header("location:listar_grupoYCG.php");
+pg_prepare($con, "insert_persona", $query);
+
+$result = pg_execute($con, "insert_persona", array($documento, $nombre, $apellido, $direccion, $celular));
+
+if ($result) {
+    header("Location: listar_grupoYCG.php");
+} else {
+    echo "Error al insertar: " . pg_last_error($con);
+}
 ?>
