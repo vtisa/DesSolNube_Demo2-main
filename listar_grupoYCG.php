@@ -133,14 +133,15 @@ $resultado = pg_query($con, $sql);
     </div>
 
     <!-- Botón Registrar -->
-    <div class="container text-right mb-4">
-        <a href="index.php" class="btn btn-info">Registrar</a>
-    </div>
+  
 
     <!-- Tabla para mostrar los datos de las personas -->
     <div class="card mt-5">
         <div class="card-body">
             <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
+            <div class="container text-right mb-4">
+                <a href="index.php" class="btn btn-info">Registrar</a>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped text-center">
                     <thead class="table-info">
