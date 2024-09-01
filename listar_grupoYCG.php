@@ -7,7 +7,7 @@ $messageType = "";
 
 // Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action'])) {
+    
         if ($_POST['action'] == 'edit') {
             $documento = $_POST['documento'];
             $nombre = $_POST['nombre'];
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $messageType = "success";
             }
         }
-    }
+    
 }
 
 // Fetch all records
@@ -155,7 +155,7 @@ $resultado = pg_query($con, $sql);
         <div id="message-container"></div>
 
         <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-            <h1 class="display-4 text-info">Registrando datos con Railway</h1>
+            <h1 class="display-4 text-info">Registrando datos con Render</h1>
             <p class="lead">PostgreSQL + PHP</p>
         </div>
 
