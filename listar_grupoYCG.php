@@ -7,39 +7,37 @@ $messageType = "";
 
 // Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-        if ($_POST['action'] == 'edit') {
-            $documento = $_POST['documento'];
-            $nombre = $_POST['nombre'];
-            $apellido = $_POST['apellido'];
-            $direccion = $_POST['direccion'];
-            $celular = $_POST['celular'];
-            
-            $sql = "UPDATE persona SET nombre = $1, apellido = $2, direccion = $3, celular = $4 WHERE documento = $5";
-            $result = pg_query_params($con, $sql, array($nombre, $apellido, $direccion, $celular, $documento));
-            
-            if (!$result) {
-                $message = "Error al actualizar: " . pg_last_error($con);
-                $messageType = "error";
-            } else {
-                $message = "Actualizado exitosamente";
-                $messageType = "success";
-            }
-        } elseif ($_POST['action'] == 'delete') {
-            $documento = $_POST['documento'];
-            
-            $sql = "DELETE FROM persona WHERE documento = $1";
-            $result = pg_query_params($con, $sql, array($documento));
-            
-            if (!$result) {
-                $message = "Error al borrar: " . pg_last_error($con);
-                $messageType = "error";
-            } else {
-                $message = "Borrado exitosamente";
-                $messageType = "success";
-            }
+    if ($_POST['action'] == 'edit') {
+        $documento = $_POST['documento'];
+        $nombre = $_POST['nombre'];
+        $apellido = $_POST['apellido'];
+        $direccion = $_POST['direccion'];
+        $celular = $_POST['celular'];
+        
+        $sql = "UPDATE persona SET nombre = $1, apellido = $2, direccion = $3, celular = $4 WHERE documento = $5";
+        $result = pg_query_params($con, $sql, array($nombre, $apellido, $direccion, $celular, $documento));
+        
+        if (!$result) {
+            $message = "Error al actualizar: " . pg_last_error($con);
+            $messageType = "error";
+        } else {
+            $message = "Actualizado exitosamente";
+            $messageType = "success";
         }
-    
+    } elseif ($_POST['action'] == 'delete') {
+        $documento = $_POST['documento'];
+        
+        $sql = "DELETE FROM persona WHERE documento = $1";
+        $result = pg_query_params($con, $sql, array($documento));
+        
+        if (!$result) {
+            $message = "Error al borrar: " . pg_last_error($con);
+            $messageType = "error";
+        } else {
+            $message = "Borrado exitosamente";
+            $messageType = "success";
+        }
+    }
 }
 
 // Fetch all records
@@ -248,90 +246,81 @@ $resultado = pg_query($con, $sql);
         </div>
     </div>
 
+    <!-- Modal para Confirmar Eliminación -->
+    <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que quieres eliminar esta persona?</p>
+                    <form id="eliminarForm" method="post">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" id="deleteDocumento" name="documento">
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
     <footer class="text-center">
         <div class="container">
-            <img class="mb-2" src="https://www.svgrepo.com/show/508391/uncle.svg" alt="" width="24" height="24">
-            <small class="d-block mb-3 text-muted">&copy; 2023-1</small>
+            <img src="index2.png" alt="Index Logo">
+            <p>&copy; 2023 Tu Empresa. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
     <script>
-        function showMessage(message, type) {
-            const messageContainer = document.getElementById('message-container');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', type === 'error' ? 'message-error' : 'message-success');
-            messageElement.textContent = message;
+        document.addEventListener("DOMContentLoaded", function() {
+            const messageContainer = document.getElementById("message-container");
 
-            messageContainer.appendChild(messageElement);
+            function showMessage(type, text) {
+                const message = document.createElement("div");
+                message.className = `message message-${type}`;
+                message.textContent = text;
+                messageContainer.appendChild(message);
 
-            setTimeout(() => {
-                messageElement.style.opacity = '0';
                 setTimeout(() => {
-                    messageContainer.removeChild(messageElement);
-                }, 500);
-            }, 2000);
-        }
-
-        <?php
-        if (!empty($message)) {
-            echo "showMessage('$message', '$messageType');";
-        }
-        ?>
-
-        function editarPersona(persona) {
-            document.getElementById('editDocumento').value = persona.documento;
-            document.getElementById('editNombre').value = persona.nombre;
-            document.getElementById('editApellido').value = persona.apellido;
-            document.getElementById('editDireccion').value = persona.direccion;
-            document.getElementById('editCelular').value = persona.celular;
-
-            $('#editarModal').modal('show');
-        }
-
-        function eliminarPersona(documento) {
-            if (confirm("¿Estás seguro de que deseas eliminar este registro?")) {
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.style.display = 'none';
-
-                var actionInput = document.createElement('input');
-                actionInput.type = 'hidden';
-                actionInput.name = 'action';
-                actionInput.value = 'delete';
-                form.appendChild(actionInput);
-
-                var documentoInput = document.createElement('input');
-                documentoInput.type = 'hidden';
-                documentoInput.name = 'documento';
-                documentoInput.value = documento;
-                form.appendChild(documentoInput);
-
-                document.body.appendChild(form);
-                form.submit();
+                    message.remove();
+                }, 5000);
             }
-        }
 
-        $(document).ready(function() {
-            $('#editarForm').on('submit', function(e) {
-                e.preventDefault();
-                $.ajax({
-                    url: window.location.href,
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(response) {
-                        $('#editarModal').modal('hide');
-                        location.reload();
-                    },
-                    error: function() {
-                        showMessage('Error en la solicitud', 'error');
-                    }
-                });
-            });
+            <?php if ($message): ?>
+            showMessage('<?php echo $messageType; ?>', '<?php echo $message; ?>');
+            <?php endif; ?>
+
+            window.editarPersona = function(persona) {
+                document.getElementById("editDocumento").value = persona.documento;
+                document.getElementById("editNombre").value = persona.nombre;
+                document.getElementById("editApellido").value = persona.apellido;
+                document.getElementById("editDireccion").value = persona.direccion;
+                document.getElementById("editCelular").value = persona.celular;
+                $('#editarModal').modal('show');
+            }
+
+            window.eliminarPersona = function(documento) {
+                document.getElementById("deleteDocumento").value = documento;
+                $('#eliminarModal').modal('show');
+            }
         });
+    </script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+        integrity="sha384-csS5cXGZjPYJL4Ih6JABWHtdLbsH6M1VXq3qt4WmFIKkAaKGiCx9BfJFcFIYOw0g" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
 </body>
 
