@@ -62,7 +62,7 @@ $resultado = pg_query($con, $sql);
 
     <style>
         body {
-            padding-top: 56px; /* Adjust for fixed navbar */
+            padding-top: 56px; 
         }
         h1 {
             font-weight: bold;
@@ -100,7 +100,7 @@ $resultado = pg_query($con, $sql);
             margin-top: 50px;
         }
         footer img {
-            margin-bottom: 10px;
+            margin-bottom: 3px;
         }
         @media (max-width: 768px) {
             .table-responsive {
@@ -140,7 +140,7 @@ $resultado = pg_query($con, $sql);
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="index2.png" alt="Index Logo">
-                <span>Index</span>
+                <span>Software</span>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,7 +162,7 @@ $resultado = pg_query($con, $sql);
             <div class="card-body">
                 <h2 class="card-title text-center mb-4 text-info">Lista de Personas Registradas</h2>
                 <div class="text-right mb-4">
-                    <a href="index.php" class="btn btn-info">Registrar</a>
+                    <a href="index.php" class="btn btn-info">Agregar</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped text-center">

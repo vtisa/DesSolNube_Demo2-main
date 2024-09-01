@@ -14,6 +14,10 @@
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <style>
+        body{
+            padding-top: 56px;
+        }
+        
         h1 {
             font-weight: bold;
             color: #333;
