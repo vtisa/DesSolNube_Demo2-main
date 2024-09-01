@@ -270,10 +270,12 @@ $resultado = pg_query($con, $sql);
     </div>
 
     <!-- Footer -->
-    <footer class="text-center">
-        <div class="container">
-            <img src="index2.png" alt="Index Logo">
-            <p>&copy; 2023 Tu Empresa. Todos los derechos reservados.</p>
+    <footer class="pt-4 text-center">
+        <div class="row">
+            <div class="col-12 col-md">
+                <img class="mb-2" src="https://www.svgrepo.com/show/508391/uncle.svg" alt="" width="24" height="24">
+                <small class="d-block mb-3 text-muted">&copy; 2023-1</small>
+            </div>
         </div>
     </footer>
 

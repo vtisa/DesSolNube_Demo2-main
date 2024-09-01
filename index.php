@@ -17,7 +17,7 @@
         body{
             padding-top: 56px;
         }
-        
+
         h1 {
             font-weight: bold;
             color: #333;
@@ -78,15 +78,17 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="#">
-            <img src="index2.png" alt="Index Logo">
-            <span>Software</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="index2.png" alt="Index Logo">
+                <span>Software</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
     </nav>
 
     <div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
