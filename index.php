@@ -77,7 +77,7 @@
     <nav class="navbar navbar-expand-md navbar-light bg-light">
         <a class="navbar-brand" href="#">
             <img src="index2.png" alt="Index Logo">
-            <span>Index</span>
+            <span>Software</span>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
             aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,7 +86,7 @@
     </nav>
 
     <div class="container px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4 text-info">Registrando datos with Railway</h1>
+        <h1 class="display-4 text-info">Registrando datos con Render</h1>
         <p class="lead">PostgreSQL + PHP</p>
     </div>
 
@@ -132,8 +132,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- Modal de confirmación -->
 
 
 

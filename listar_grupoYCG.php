@@ -2,6 +2,9 @@
 include("conexion.php");
 $con = conexion();
 
+$message = "";
+$messageType = "";
+
 // Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['action'])) {
@@ -16,9 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = pg_query_params($con, $sql, array($nombre, $apellido, $direccion, $celular, $documento));
             
             if (!$result) {
-                echo "Error al actulizar" . pg_last_error($con);
+                $message = "Error al actualizar: " . pg_last_error($con);
+                $messageType = "error";
             } else {
-                echo "Actualizado exitosamente";
+                $message = "Actualizado exitosamente";
+                $messageType = "success";
             }
         } elseif ($_POST['action'] == 'delete') {
             $documento = $_POST['documento'];
@@ -27,9 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $result = pg_query_params($con, $sql, array($documento));
             
             if (!$result) {
-                echo "Error al borrar: " . pg_last_error($con);
+                $message = "Error al borrar: " . pg_last_error($con);
+                $messageType = "error";
             } else {
-                echo "Borrado exitosamente";
+                $message = "Borrado exitosamente";
+                $messageType = "success";
             }
         }
     }
@@ -102,6 +109,30 @@ $resultado = pg_query($con, $sql);
                 font-size: 0.9rem;
             }
         }
+        #message-container {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+        }
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .message-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .message-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 
@@ -121,6 +152,8 @@ $resultado = pg_query($con, $sql);
     </nav>
 
     <main role="main" class="container mt-5">
+        <div id="message-container"></div>
+
         <div class="px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
             <h1 class="display-4 text-info">Registrando datos con Railway</h1>
             <p class="lead">PostgreSQL + PHP</p>
@@ -227,6 +260,28 @@ $resultado = pg_query($con, $sql);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
     <script>
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('message-container');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', type === 'error' ? 'message-error' : 'message-success');
+            messageElement.textContent = message;
+
+            messageContainer.appendChild(messageElement);
+
+            setTimeout(() => {
+                messageElement.style.opacity = '0';
+                setTimeout(() => {
+                    messageContainer.removeChild(messageElement);
+                }, 500);
+            }, 2000);
+        }
+
+        <?php
+        if (!empty($message)) {
+            echo "showMessage('$message', '$messageType');";
+        }
+        ?>
+
         function editarPersona(persona) {
             document.getElementById('editDocumento').value = persona.documento;
             document.getElementById('editNombre').value = persona.nombre;
@@ -259,6 +314,24 @@ $resultado = pg_query($con, $sql);
                 form.submit();
             }
         }
+
+        $(document).ready(function() {
+            $('#editarForm').on('submit', function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: window.location.href,
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#editarModal').modal('hide');
+                        location.reload();
+                    },
+                    error: function() {
+                        showMessage('Error en la solicitud', 'error');
+                    }
+                });
+            });
+        });
     </script>
 </body>
 
